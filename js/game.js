@@ -14,6 +14,9 @@ var game = {
   groundLayer : null,  
   scoreLayer : null,
   playersBallLayer : null,
+  //SON
+  wallSound : null,
+  playerSound : null,
   
   //Position de la balle
   ball : {
@@ -29,16 +32,27 @@ var game = {
     //Vitesse de la balle
     speed : 1,
 
-    bounce : function() {
+    bounce : function(soundToPlay) {
       if ( this.posX > game.groundWidth || this.posX < 0 )
         this.directionX = -this.directionX;
+          //soundToPlay.play();
       if ( this.posY > game.groundHeight || this.posY < 0  )
-        this.directionY = -this.directionY;      
+        this.directionY = -this.directionY;  
+         // soundToPlay.play();    
     },
 
     move : function() {
       this.posX += this.directionX * this.speed;
       this.posY += this.directionY * this.speed;
+    },
+
+    collide : function(anotherItem) {
+      if ( !( this.posX >= anotherItem.posX + anotherItem.width || this.posX <= anotherItem.posX - this.width
+      || this.posY >= anotherItem.posY + anotherItem.height || this.posY <= anotherItem.posY - this.height ) ) {
+        // Collision
+        return true;
+      } 
+      return false;
     },
   },
 
@@ -48,7 +62,10 @@ var game = {
     height : 50,
     color : "#FFFFFF",
     posX : 10,
-    posY : 200
+    posY : 200,
+    goUp : false,
+    goDown : false,
+    originalPosition : "left"
   },
    
   //Raquette du joueur 2
@@ -57,7 +74,10 @@ var game = {
     height : 50,
     color : "#FFFFFF",
     posX : 600,
-    posY : 200
+    posY : 200,
+    goUp : false,
+    goDown : false,
+    originalPosition : "right"
   },
 
 
@@ -79,7 +99,17 @@ var game = {
     
     //On appelle la fonction displayPlayers Pour afficher les raquettes
     this.displayPlayers();
-  },
+
+    this.initKeyboard(game.control.onKeyDown, game.control.onKeyUp);
+    this.initMouse(game.control.onMouseMove); 
+    this.wallSound = new Audio("./sound/pingRaquette.ogg");
+    this.playerSound = new Audio("./sound/pingRaquette.ogg");
+ 
+    game.ai.setPlayerAndBall(this.playerTwo, this.ball);
+    this.collideBallWithPlayersAndAction();
+    this.moveBall();
+
+     },
 
   //Fonction pour l'affichage du score
   displayScore : function(scorePlayer1, scorePlayer2) {
@@ -100,11 +130,49 @@ var game = {
 
   moveBall : function() { 
     this.ball.move();
-    this.ball.bounce();
+    this.ball.bounce(this.wallSound);
     this.displayBall();
   },
 
   clearLayer : function(targetLayer) {
     targetLayer.clear();
+  },
+
+  initKeyboard : function(onKeyDownFunction, onKeyUpFunction) {
+    window.onkeydown = onKeyDownFunction;
+    window.onkeyup = onKeyUpFunction;
+  },
+  movePlayers : function() {
+    if ( game.control.controlSystem == "KEYBOARD" ) {
+      // keyboard control
+      if ( game.playerOne.goUp ) {
+        game.playerOne.posY-=5;
+      } else if ( game.playerOne.goDown ) {
+        game.playerOne.posY+=5;
+      }
+    } else if ( game.control.controlSystem == "MOUSE" ) {
+      // mouse control
+      if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer)
+        game.playerOne.posY-=5;
+      else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer)
+        game.playerOne.posY+=5;
+    }
+  },
+
+  initMouse : function(onMouseMoveFunction) {
+    window.onmousemove = onMouseMoveFunction;
+  },
+
+  collideBallWithPlayersAndAction : function() { 
+    if ( this.ball.collide(game.playerOne) ) {
+      game.ball.directionX = -game.ball.directionX;
+      this.playerSound.play();
+    }
+    if ( this.ball.collide(game.playerTwo) ) {
+      game.ball.directionX = -game.ball.directionX;
+      this.playerSound.play();
+    }
   }
+
+ 
 };
