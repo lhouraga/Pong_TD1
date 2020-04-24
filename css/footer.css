@@ -1,0 +1,14 @@
+.footer {
+    position: fixed;
+    height: 50px;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    color: rgb(41, 104, 5);
+    text-align: center;
+    background: rgb(4, 49, 63);
+}
+
+.p{
+    text-size-adjust: 15px;
+}

@@ -21,3 +21,12 @@ Grace à node.js, on fait jouer les deux joueurs : bien réfléchir à ce niveau
 Sinon vous pouvez faire la version du "double" ie de chaque coté il y a  deux joueurs  qui jouent ensemble ( donc 4 joueurs au total )
 
 Ce devrait être très ludique et en même temps, vous allez voir comment intégrer toutes les technologies que Mr Breda et moi me vous avons enseignées !
+
+
+
+Pour mettre mon projet à jour sur git je fais:
+
+git init
+git add .
+git commit -m "message"
+git push -u origin master

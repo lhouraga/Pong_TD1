@@ -18,6 +18,9 @@ game.control = {
       } else if ( event.keyCode == game.keycode.KEYUP ) {
         game.playerOne.goUp = false;
       }
+      if ( event.keyCode == game.keycode.SPACEBAR ) { 
+        game.ball.inGame = true;
+      }
     },
 
     onMouseMove : function (event) {

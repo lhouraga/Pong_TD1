@@ -1,12 +1,23 @@
 <html>
+  <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.css"/>
+  <link href="../css/footer.css" rel="stylesheet">
  <body>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
+  <form class="form-inline my-2 my-lg-0">
+    <a href="../index.html"> <h4>Retour Accueil </h4></a>
+  </form>
+  
+  <footer class="footer"> 
+    <div class="footer-copyright text-center py-3">© 2020 Copyright lauraine houraga Master 1 MIAGE
+    </div>
+  </footer>
  </body>
-<script src="js/game.js"></script>
-<script src="js/game.display.js"></script>
-<script src="js/game.control.js"></script>
-<script src="js/game.keycode.js"></script>
-<script src="js/game.ai.js"></script>
+<script src="../js/game.js"></script>
+<script src="../js/game.display.js"></script>
+<script src="../js/game.control.js"></script>
+<script src="../js/game.keycode.js"></script>
+<script src="../js/game.ai.js"></script>
 <script>
 (function () {
   // début du code isolé
@@ -24,6 +35,7 @@
     game.movePlayers();
     game.displayPlayers();
     game.moveBall();
+    game.lostBall();
     game.ai.move();
     game.collideBallWithPlayersAndAction();
     requestAnimId = window.requestAnimationFrame(main); // rappel de main au prochain rafraîchissement de la page

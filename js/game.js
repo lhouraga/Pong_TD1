@@ -28,6 +28,7 @@ var game = {
     posY : 200,
     directionX : 1,
     directionY : 1,
+    inGame : false,
 
     //Vitesse de la balle
     speed : 1,
@@ -42,8 +43,10 @@ var game = {
     },
 
     move : function() {
+      if (this.inGame){
       this.posX += this.directionX * this.speed;
       this.posY += this.directionY * this.speed;
+      }
     },
 
     collide : function(anotherItem) {
@@ -54,6 +57,16 @@ var game = {
       } 
       return false;
     },
+
+    lost : function(player) {
+      var returnValue = false;
+      if ( player.originalPosition == "left" && this.posX < player.posX - this.width ) {
+        returnValue = true;
+      } else if ( player.originalPosition == "right" && this.posX > player.posX + player.width ) {
+        returnValue = true;
+      }
+      return returnValue;
+    }
   },
 
   //Raquette du joueur 1
@@ -65,6 +78,7 @@ var game = {
     posY : 200,
     goUp : false,
     goDown : false,
+    score:0,
     originalPosition : "left"
   },
    
@@ -75,6 +89,7 @@ var game = {
     color : "#FFFFFF",
     posX : 600,
     posY : 200,
+    score:0,
     goUp : false,
     goDown : false,
     originalPosition : "right"
@@ -85,14 +100,14 @@ var game = {
     this.groundLayer = game.display.createLayer("terrain", this.groundWidth, this.groundHeight, undefined, 0, "#000000", 0, 0); 
     game.display.drawRectangleInLayer(this.groundLayer, this.netWidth, this.groundHeight, this.netColor, this.groundWidth/2 - this.netWidth/2, 0);
     
-    this.scoreLayer = game.display.createLayer("score", this.groundWidth, this.groundHeight, undefined, 1, undefined, 0, 0);
+    this.scoreLayer = game.display.createLayer("score", this.groundWidth, this.groundHeight, undefined, 1, undefined, this.playerTwo, 0);
     game.display.drawTextInLayer(this.scoreLayer, "SCORE", "10px Arial", "#FF0000", 10, 10);
     
     this.playersBallLayer = game.display.createLayer("joueursetballe", this.groundWidth, this.groundHeight, undefined, 2, undefined, 0, 0);  
     game.display.drawTextInLayer(this.playersBallLayer, "JOUEURSETBALLE", "10px Arial", "#FF0000", 100, 100);
   
     //On appelle la fonction displayScore Pour afficher le score
-    this.displayScore(0,0);
+    this.displayScore(this.playerOne.score1,this.playerTwo.score2);
 
     //On appelle la fonction displayScore Pour afficher la balle
     this.displayBall();
@@ -108,6 +123,7 @@ var game = {
     game.ai.setPlayerAndBall(this.playerTwo, this.ball);
     this.collideBallWithPlayersAndAction();
     this.moveBall();
+    this.lostBall();
 
      },
 
@@ -167,12 +183,30 @@ var game = {
     if ( this.ball.collide(game.playerOne) ) {
       game.ball.directionX = -game.ball.directionX;
       this.playerSound.play();
+    } else 
+    {
+      this.playerOne.score1+=1;
     }
     if ( this.ball.collide(game.playerTwo) ) {
       game.ball.directionX = -game.ball.directionX;
       this.playerSound.play();
+    } else 
+    {
+      this.playerTwo.score2+=1;
     }
-  }
+  },
+
+  lostBall : function() {
+    if ( this.ball.lost(this.playerOne) ) {
+      // action si joueur de gauche perd la balle
+      this.playerTwo.score++;
+    } else if ( this.ball.lost(this.playerTwo) ) {
+      // action si joueur de droiteperd la balle
+      this.playerOne.score++;
+    }
+    this.scoreLayer.clear();
+    this.displayScore(this.playerOne.score, this.playerTwo.score);
+  },
 
  
 };
